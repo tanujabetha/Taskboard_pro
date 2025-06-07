@@ -1,4 +1,4 @@
-const User = require("../models/Users.js");
+const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -9,7 +9,7 @@ const validatorResult = validator.validationResult;
 THE SIGN-UP LOGIC
 */
 
-exports.signUp = async (req, res) => {
+exports.signup = async (req, res) => {
   const errors = validatorResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -19,6 +19,7 @@ exports.signUp = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   //Checking if the user already exists
+  console.log(name);
 
   try {
     let user = await User.findOne({ email });
@@ -49,7 +50,7 @@ exports.signUp = async (req, res) => {
     return res.status(200).json({ message: "User is successfully created" });
   } catch (error) {
     console.error("Sign-up error: ", error.message);
-    res.status(500).sendError("Server Error");
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -94,6 +95,7 @@ exports.login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
+        console.log(process.env.JWT_SECRET);
 
         // Send back token in response
         return res.status(200).json({ token });
