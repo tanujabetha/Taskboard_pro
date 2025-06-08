@@ -2,27 +2,25 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-// Creating a server
-const app = express();
+const app = express();//starting the server
+dotenv.config(); //using the .env data
 
-// Load .env variables into process.env
-dotenv.config(); 
-
-// Middleware to parse incoming JSON
-app.use(express.json());
+app.use(express.json()); //ensuring request is parsed in json
 
 // Import routes
 const authRoutes = require("./routes/auth");
+const taskRoutes = require("./routes/task");
 
-// All auth routes will start with /api/auth
+// Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/task", taskRoutes); 
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB connected"))
-.catch((err) => console.error("MongoDB connection failed:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection failed:", err));
 
-// Start the server
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
