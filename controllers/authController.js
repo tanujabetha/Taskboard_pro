@@ -96,7 +96,7 @@ exports.login = async (req, res) => {
             { expiresIn: '1h' }
         );
         console.log(process.env.JWT_SECRET);
-        console.log(token);
+ 
 
         // Send back token in response
         return res.status(200).json({ token });

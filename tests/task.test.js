@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../app"); 
+const app = require("../app");
 const mongoose = require("mongoose");
 
 let token = "";
@@ -7,21 +7,17 @@ let createdTaskId = "";
 
 beforeAll(async () => {
   // signup test user
-  await request(app)
-    .post("/api/auth/signup")
-    .send({
-      name: "Test User",
-      email: "testuser@example.com",
-      password: "test123",
-    });
+  await request(app).post("/api/auth/signup").send({
+    name: "Test User",
+    email: "testuser@example.com",
+    password: "test123",
+  });
 
   // Login to get token
-  const loginRes = await request(app)
-    .post("/api/auth/login")
-    .send({
-      email: "testuser@example.com",
-      password: "test123",
-    });
+  const loginRes = await request(app).post("/api/auth/login").send({
+    email: "testuser@example.com",
+    password: "test123",
+  });
 
   token = loginRes.body.token;
 });
@@ -34,7 +30,7 @@ afterAll(async () => {
 describe("Task API Integration Tests", () => {
   it("should create a new task", async () => {
     const res = await request(app)
-      .post("/api/tasks/create")
+      .post("/api/task/create")
       .set("Authorization", `Bearer ${token}`)
       .send({
         title: "Test Task",
@@ -48,12 +44,10 @@ describe("Task API Integration Tests", () => {
 
     // Fetch the created task from DB to get its ID
     const allTasksRes = await request(app)
-      .get("/api/tasks/getAllTasks")
+      .get("/api/task/getAllTasks")
       .set("Authorization", `Bearer ${token}`);
 
-    const createdTask = allTasksRes.body.find(
-      (t) => t.title === "Test Task"
-    );
+    const createdTask = allTasksRes.body.find((t) => t.title === "Test Task");
 
     createdTaskId = createdTask._id;
     expect(createdTask).toBeDefined();
@@ -61,22 +55,23 @@ describe("Task API Integration Tests", () => {
 
   it("should get all tasks", async () => {
     const res = await request(app)
-      .get("/api/tasks/getAllTasks")
+      .get("/api/task/getAllTasks")
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBeGreaterThan(0);
   });
-
   it("should update the task", async () => {
     const res = await request(app)
-      .put("/api/tasks/updateTask")
+      .put("/api/task/updateTask")
       .set("Authorization", `Bearer ${token}`)
       .send({
-        taskId: createdTaskId,
-        description: "Updated by Jest test",
-        status: "In Progress",
+        title: "Test Task", // use title instead of taskId
+        updates: {
+          description: "Updated by Jest test",
+          status: "In Progress",
+        },
       });
 
     expect(res.statusCode).toBe(200);
@@ -84,12 +79,24 @@ describe("Task API Integration Tests", () => {
     expect(res.body.description).toBe("Updated by Jest test");
   });
 
-  it("should delete the task", async () => {
+  it("get the task", async () => {
     const res = await request(app)
-      .delete("/api/tasks/deleteTask")
+      .get("/api/task/getTask")
       .set("Authorization", `Bearer ${token}`)
       .send({
-        taskId: createdTaskId,
+        title: "Test Task", // ✅ in body, not query
+      });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.title).toBe("Test Task");
+  });
+
+  it("should delete the task", async () => {
+    const res = await request(app)
+      .delete("/api/task/deleteTask")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "Test Task", // ✅ use title
       });
 
     expect(res.statusCode).toBe(200);
