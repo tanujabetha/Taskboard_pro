@@ -59,7 +59,7 @@ DELETE  | /api/task/deleteTask | Delete a task
 
 Setup Instructions:
 
-1. Clone repogit clone https://github.com/your-username/taskboard-backend.git
+1. Clone repogit clone https://github.com/tanujabetha/Taskboard_pro.git
 
 2. Install dependencies: npm install
 
