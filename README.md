@@ -39,3 +39,15 @@ docker stop redis-server
 docker start redis-server
 
 BullMQ: Install: npm install bullmq ioredis dotenv
+Have the queue worker running in diff terminal. 
+npm workers/emailWorker.js
+
+
+
+Creating React Appp:
+npx create-react-app taskboard-frontend
+Navigate to taskboard-frontend and run react app with npm start
+We'll use:
+Axios for API calls: npm install axios react-router-dom
+React Router for navigation
+Context API or localStorage to manage the JWT token
