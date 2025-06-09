@@ -25,3 +25,17 @@ install nodemon: This is helpful if you want to run the server with the changes 
 Tests:
  npm install --save-dev jest supertest
  --save-dev means it is only for development not for production.
+
+ Message queue:
+ create a docker for redis.
+ docker pull redis - downloads redis image
+ now, we need to run docker aswell:
+ docker run -d -p 6379:6379 --name redis-server redis
+run redis in detached mode in port 6379 with container name as redis-server.
+Detached mode means it runs in the background.
+docker ps - shows the running contaners
+
+docker stop redis-server
+docker start redis-server
+
+BullMQ: Install: npm install bullmq ioredis dotenv

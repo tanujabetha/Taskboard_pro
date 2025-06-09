@@ -1,12 +1,12 @@
 const Task = require("../models/Task");
+const User = require("../models/User");
+const emailQueue = require("../queue/emailQueue");
 
 //creating the task
 exports.createTask = async (req, res) => {
   try {
-    const title = req.body.title;
-    const description = req.body.description;
-    const status = req.body.status;
-    const labels = req.body.labels;
+    const { title, description, status, labels } = req.body;
+
     const create_task = new Task({
       title,
       description,
@@ -14,13 +14,31 @@ exports.createTask = async (req, res) => {
       labels,
       user: req.user.id,
     });
+
     await create_task.save();
+
+    const user = await User.findById(req.user.id).select("email");
+    const userEmail = user.email;
+
+    await emailQueue.add("sendEmail", {
+      type: "created",
+      taskData: {
+        title,
+        description,
+        status,
+        labels,
+        user: req.user.id,
+        to: userEmail,
+      },
+    });
+
     return res.status(201).json({ message: "Task is created" });
   } catch (error) {
     console.error("Task creation failed: ", error.message);
     res.status(500).json({ message: "Server error while creating the task" });
   }
 };
+
 
 //get a task
 exports.getTask = async (req, res) => {
@@ -68,6 +86,21 @@ exports.updateTask = async (req, res) => {
     );
     if (!updatedTask)
       return res.status(404).json({ message: "Task not found to update" });
+
+    const user = await User.findById(req.user.id).select("email");
+    const userEmail = user.email;
+
+    await emailQueue.add("sendEmail", {
+      type: "updated",
+      taskData: {
+        title: updatedTask.title,
+        description: updatedTask.description,
+        labels: updatedTask.labels,
+        user: req.user.id,
+        to: userEmail,
+      },
+    });
+
     res.status(200).json(updatedTask);
   } catch (error) {
     console.log("error");
@@ -84,6 +117,21 @@ exports.deleteTask = async (req, res) => {
     const deleted = await Task.findOneAndDelete({ title, user: req.user.id });
     if (!deleted)
       return res.status(404).json({ message: "Task not found to delete" });
+
+    const user = await User.findById(req.user.id).select("email");
+    const userEmail = user.email;
+
+    await emailQueue.add("sendEmail", {
+      type: "deleted",
+      taskData: {
+        title: deleted.title,
+        description: deleted.description,
+        labels: deleted.labels,
+        user: req.user.id,
+        to: userEmail,
+      },
+    });
+
     res.status(200).json({ message: "Task deleted successfully" });
   } catch (error) {}
 };
