@@ -20,7 +20,7 @@ Tech Stack
 
 Backend: Node.js, Express.js
 
-Database: MongoDB + Mongoose
+Database: (NoSQL) MongoDB + Mongoose
 
 Auth: JWT Tokens, bcrypt
 
