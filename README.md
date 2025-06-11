@@ -1,53 +1,85 @@
-appName=TaskboardPro
-
-npm install mongodb
-
-steps:
-install node
-set up mongodb atlas
-get the connection string
-npm install dotenv
-
-app.js: main code file
-.env: for all the environment variables
+Taskboard-Pro:
+A secure and scalable backend for a task management system, built with Node.js, Express, MongoDB, and Redis. This project supports user authentication, task CRUD operations, and asynchronous email notifications using BullMQ.
 
 
-1. Build authentication module
-2. Build authController. 
-Install npm install bcryptjs express-validator
-3. login: Login and give json web token(JWT).
-npm install jsonwebtoken
+Features
 
+1. JWT-based user authentication (signup/login)
 
-install nodemon: This is helpful if you want to run the server with the changes being made. Other wise, for each change, we need to quick the server, and restart using npm app.js. This is nodemon app.js
+2. CRUD APIs for managing tasks
 
+3. Middleware-protected routes for authenticated users
 
-Tests:
- npm install --save-dev jest supertest
- --save-dev means it is only for development not for production.
+4. Email notifications via BullMQ + Redis queue
 
- Message queue:
- create a docker for redis.
- docker pull redis - downloads redis image
- now, we need to run docker aswell:
- docker run -d -p 6379:6379 --name redis-server redis
-run redis in detached mode in port 6379 with container name as redis-server.
-Detached mode means it runs in the background.
-docker ps - shows the running contaners
-
-docker stop redis-server
-docker start redis-server
-
-BullMQ: Install: npm install bullmq ioredis dotenv
-Have the queue worker running in diff terminal. 
-npm workers/emailWorker.js
+5. Integration tests with Jest & Supertest (WIP)
 
 
 
-Creating React Appp:
-npx create-react-app taskboard-frontend
-Navigate to taskboard-frontend and run react app with npm start
-We'll use:
-Axios for API calls: npm install axios react-router-dom
-React Router for navigation
-Context API or localStorage to manage the JWT token
+Tech Stack
+
+Backend: Node.js, Express.js
+
+Database: (NoSQL) MongoDB + Mongoose
+
+Auth: JWT Tokens, bcrypt
+
+Queue: BullMQ + Redis
+
+Testing: Jest, Supertest
+
+Dev Tools: Nodemon, dotenv
+
+
+
+API Endpoints
+
+Auth Routes:
+
+Method |      Endpoint    | Description
+
+POST   | /api/auth/signup | Register new user
+
+POST   | /api/auth/login  | Login with JWT
+
+Task Routes:
+
+Method |     Endpoint     |  Description
+
+POST   |   /api/task/create | Create a new task
+
+GET    |  /api/task/getTask | Get a specific task
+
+GET     |  /api/task/getAllTasks | Get all tasks
+
+PUT     | /api/task/updateTask | Update a task
+
+DELETE  | /api/task/deleteTask | Delete a task
+
+
+Setup Instructions:
+
+1. Clone repogit clone https://github.com/tanujabetha/Taskboard_pro.git
+
+2. Install dependencies: npm install
+
+3. Create .env file
+PORT=4000
+MONGO_URI=your_mongodb_connection
+JWT_SECRET=your_jwt_secret
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+4. docker run --name redis -p 6379:6379 redis
+
+5. Run the server
+   npm run dev
+
+
+
+Run Tests:
+npm test
+
+
+Postman Collection:
+This is available in the postman folder.
